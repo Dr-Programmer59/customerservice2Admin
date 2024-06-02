@@ -1,6 +1,7 @@
 'use client'
 import Erorr from '@/components/Erorr';
-import Info from '@/components/info';
+import Info from '@/components/Info';
+
 import { register } from '@/lib/actions/user';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux'
