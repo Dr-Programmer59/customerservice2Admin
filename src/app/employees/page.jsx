@@ -5,31 +5,19 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 
 function page() {
-  const [categories, setcategories] = useState([])
-  const [category, setcategory] = useState("")
   const [name, setname] = useState("")
-  const [description, setdescription] = useState("")
+  const [role, setRole] = useState("")
   const [currentIndex, setcurrentIndex] = useState(0)
   const [showPopup, setshowPopup] = useState(false)
   const fetchEmployees = async () => {
     let res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/users`,{ withCredentials: true });
     res.data.users.map(user => {
       
-        setUsers((prev) => [...prev, [user._id, user.name, user.email, user.category]])
+        setUsers((prev) => [...prev, [user._id, user.name, user.email, user.role]])
       
     })
   }
-  useEffect(() => {
-    const fetchCategories = async () => {
-      let res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/categories`);
-      res.data.categories.map(category => {
-        if (!categories.includes(category.name)) {
-          setcategories((prev) => [...prev, category.name])
-        }
-      })
-    }
-    fetchCategories();
-  }, [])
+
 
   const [users, setUsers] = useState([])
   
@@ -37,7 +25,7 @@ function page() {
     const key = e.target.getAttribute('data-key');
     setcurrentIndex(Number(key))
     setname(users[key][1])
-    setcategory(users[key][3])
+    setRole(users[key][3])
     setshowPopup(true)
   }
 
@@ -45,7 +33,7 @@ function page() {
     e.preventDefault();
     try {
 
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/user/${users[currentIndex][0]}`, { name, category },{ withCredentials: true });
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/user/${users[currentIndex][0]}`, { name, role },{ withCredentials: true });
       console.log("response ",res)
       setUsers([])
       fetchEmployees();
@@ -101,8 +89,13 @@ function page() {
                   </div>
                  
                   <div className="col-span-2">
-                    <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
-                    <CustomSelectBox category={category} setcategory={setcategory} options={categories} />
+                    <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Roles</label>
+                    <select name='role' value={role}  onChange={(e)=>{setRole(e.target.value)}} id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option>Select role</option>
+                      <option>sub admin</option>
+                      <option>employee</option>
+
+                    </select>
                   </div>
                 </div>
                 <button type="submit" className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">

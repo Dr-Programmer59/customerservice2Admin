@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import socket from '@/components/socket';
 import MessageBox from '@/components/MessageBox';
@@ -11,7 +11,7 @@ import { createConversation, getAdminConversation, getConversation, getMessages,
 import { current } from '@reduxjs/toolkit';
 
 import { CgProfile } from "react-icons/cg";
-
+import { v4 as uuidv4 } from 'uuid';
 
 function page() {
   const { isAuth, user } = useSelector(store => store.userReducer);
@@ -37,6 +37,8 @@ function page() {
   const [chatType, setChatType] = useState("chats")
   const [chatsFilter,setChatsFilter] = useState([]);
   const audioRef = useRef(null);
+const [recordingDelete, setrecordingDelete] = useState(false)
+
   const sortByRecentUpdate = (array) => {
     return array.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
   };
@@ -84,7 +86,8 @@ function page() {
   
   const handleUploadAudio = (blob) => {
     if (blob) {
-      const file = new File([blob], 'audio.wav', { type: 'audio/wav' });
+      const randomId = crypto.randomUUID();
+      const file = new File([blob], `${randomId}.wav`, { type: 'audio/wav' });
       const storageRef = ref(storage, `audio/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -132,7 +135,19 @@ function page() {
       );
     }
   };
-
+  useEffect(() => {
+    
+    if(recordingDelete){
+     console.log("this is delte recording delete1",recordingDelete)
+     setRecording(false);
+     mediaRecorder.current=null;
+    setTimeout(() => {
+      setrecordingDelete(false)
+    }, 2000);
+   
+    }
+    
+  }, [recordingDelete])
   const startRecording = async () => {
     try {
       if (recording == false) {
@@ -158,7 +173,7 @@ function page() {
       else if (recording == true) {
 
         mediaRecorder.current.stop();
-
+        setRecording(false);
 
 
       } // 5 seconds recording time, you can adjust as needed
@@ -171,6 +186,8 @@ function page() {
   const handleNewCustomer = (data) => {
     createConversation({ roomId: data.customerId, senderId: user._id, receiverId: data.customerId })
     setcustomerNumbers((prev) => (!prev.includes(data) ? [...prev, data] : [...prev]));
+    fetchContacts();
+
   }
 
   const handleReceiveMessage = async(msg) => {
@@ -223,9 +240,10 @@ function page() {
       return prev
     })
   }
-  const handleUpload = () => {
+  const handleUpload = useCallback(() => {
     if (imageSrc) {
-      const storageRef = ref(storage, `images/${imageSrc.name}`);
+      const randomId = uuidv4();;
+      const storageRef = ref(storage, `images/${randomId}-${imageSrc.name}`);
       const uploadTask = uploadBytesResumable(storageRef, imageSrc);
 
       uploadTask.on(
@@ -240,6 +258,7 @@ function page() {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("your downloaded url is", downloadURL)
             let data = {
               conversationId: currentConversation._id,
               roomId: currentCustomer,
@@ -249,7 +268,7 @@ function page() {
               type: "img"
             }
             socket.emit("send-msg", data);
-            newMessages(data);
+             newMessages(data);
               setmessages((prev) => [...prev, data])
 
 
@@ -257,10 +276,9 @@ function page() {
         }
       );
     }
-  }
-
+  }, [imageSrc, currentConversation, user, message]);
   
-  const handleSendMessage = async(e) => {
+  const handleSendMessage = (e) => {
     
     console.log("sending msg to ", currentCustomer);
     console.log("sending msg to ", message)
@@ -277,14 +295,17 @@ function page() {
         type: "text"
       }
       socket.emit("send-msg", msg);
-      await newMessages(msg);
+       newMessages(msg);
       setmessages((prev) => [...prev, msg])
-      await fetchContacts();
+      fetchContacts();
+     
 
 
 
 
     }
+    setmessage("")
+    setImageSrc(null)
   }
   useEffect(() => {
     socket.on("new-request:customer", handleNewCustomer)
@@ -377,7 +398,7 @@ function page() {
       
       {
         Object.keys(currentConversation).length != 0?
-      messages && <MessageBox currentConversation={currentConversation} messages={messages} message={message} setmessage={setmessage} setChatOpen={setChatOpen} handleSendMessage={handleSendMessage} startRecording={startRecording} imageSrc={imageSrc} setImageSrc={setImageSrc} role={"admin"} customerNumber={selectedChat} />
+      messages && <MessageBox socket={socket} setrecordingDelete={setrecordingDelete} currentConversation={currentConversation} messages={messages} message={message} setmessage={setmessage} setChatOpen={setChatOpen} handleSendMessage={handleSendMessage} startRecording={startRecording} imageSrc={imageSrc} setImageSrc={setImageSrc} role={"admin"} customerNumber={selectedChat} />
       :""
       }
     
