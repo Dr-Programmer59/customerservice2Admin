@@ -16,9 +16,7 @@
   }
 }
 @media (max-width: 600px) {
-  body {
-    color: lightblue;
-  }
+ 
   #msgbox{
     height: 75vh;
 
@@ -34,9 +32,7 @@
 
 /* Styles for screens between 601 and 900 pixels wide */
 @media (min-width: 601px) and (max-width: 1500px) {
-  body {
-    background-color: lightgreen;
-  }
+ 
   #msgbox{
     height: 90vh;
 
@@ -47,9 +43,7 @@
 
 /* Styles for screens larger than 901 pixels wide */
 @media (min-width:1501px) and (max-width: 2100px) {
-  body {
-    background-color: lightyellow;
-  }
+  
   #msgbox{
     height: 68vh;
 
@@ -57,9 +51,7 @@
 
 }
 @media (min-width:2101px)  {
-  body {
-    background-color: lightyellow;
-  }
+ 
   #msgbox{
     height: 75vh;
 
