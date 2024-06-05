@@ -8,9 +8,8 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux'
 import { addMember, fetchEmployees } from './service/api';
 import { FaFileImage } from "react-icons/fa";
-import Recording from "./Recording2.json"
 import dynamic from 'next/dynamic';
-import Recording from "./Recording2.json"
+
 const LottieAnimation = dynamic(() => import('./LottieAnimation'), {
     ssr: false,
 });
