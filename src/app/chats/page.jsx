@@ -34,7 +34,7 @@ function page() {
   const [chatOpen, setChatOpen] = useState(false)
   const [showchat, setshowchat] = useState(false)
   const [currentConversation, setcurrentConversation] = useState({})
-  const [chatType, setChatType] = useState("chats")
+  const [chatType, setChatType] = useState("pendings")
   const [chatsFilter,setChatsFilter] = useState([]);
   const audioRef = useRef(null);
 const [recordingDelete, setrecordingDelete] = useState(false)
@@ -240,6 +240,22 @@ const [recordingDelete, setrecordingDelete] = useState(false)
       return prev
     })
   }
+
+const getMessage = async () => {
+    const key = selectedChat.customerId;
+    
+    const data =await getConversation({ roomId: key })
+    console.log(data)
+    const messagedata=await getMessages(data._id)
+    setmessages([...messagedata])
+}
+  useEffect(() => {
+    if(selectedChat.customerId){
+      
+      getMessage();
+    }
+  },[selectedChat])
+
   const handleUpload = useCallback(() => {
     if (imageSrc) {
       const randomId = uuidv4();;
@@ -349,9 +365,9 @@ const [recordingDelete, setrecordingDelete] = useState(false)
                 </a>
                 <div class="pr-1">
                   <a class="inline-flex text-gray-800 hover:text-gray-900" href="#0">
-                    <h2 class="text-xl leading-snug font-bold">Admin Account</h2>
+                    <h2 class="text-xl leading-snug font-bold">{user?.role == "sub admin" ? "SubAdmin Account" : "Admin Account"}  </h2>
                   </a>
-                  <a class="block text-sm font-medium hover:text-indigo-500" href="#0">@ADMIN</a>
+                  <a class="block text-sm font-medium hover:text-indigo-500" href="#0">{user?.role == "sub admin" ? "@SUBADMIN" : "@ADMIN"}</a>
                 </div>
               </div>
               {/* <!-- Settings button --> */}
@@ -362,10 +378,14 @@ const [recordingDelete, setrecordingDelete] = useState(false)
           </header>
           <div class="py-3 px-5">
             <h3 class="text-xs font-semibold uppercase text-gray-400 mb-1">Chats</h3>
+            {
+              user?.role != "sub admin" && 
             <div className='flex justify-between items-center my-5'>
+
               <button onClick={() => setChatType('chats')} className={`px-2 pb-1 text-gray-800 text-md font-semibold border-b-2 ${chatType == "chats" ? 'border-[#2234AE]' : ''} `}>Chats</button>
               <button onClick={() => setChatType('pendings')} className={`px-2 pb-1 text-gray-800 text-md font-semibold border-b-2 ${chatType == "pendings" ? 'border-[#2234AE]' : ''}`}>Pending</button>
             </div>
+            }
             
             <div class="divide-y divide-gray-200">
               
@@ -398,7 +418,7 @@ const [recordingDelete, setrecordingDelete] = useState(false)
       
       {
         Object.keys(currentConversation).length != 0?
-      messages && <MessageBox socket={socket} setrecordingDelete={setrecordingDelete} currentConversation={currentConversation} messages={messages} message={message} setmessage={setmessage} setChatOpen={setChatOpen} handleSendMessage={handleSendMessage} startRecording={startRecording} imageSrc={imageSrc} setImageSrc={setImageSrc} role={"admin"} customerNumber={selectedChat} />
+      messages && <MessageBox socket={socket} setrecordingDelete={setrecordingDelete} currentConversation={currentConversation} messages={messages} message={message} setmessage={setmessage} setChatOpen={setChatOpen} handleSendMessage={handleSendMessage} startRecording={startRecording} imageSrc={imageSrc} setImageSrc={setImageSrc} role={"admin"} customerNumber={selectedChat} setcustomerNumbers={setcustomerNumbers} setSelectedChat={setSelectedChat} isSubadmin={user?.role == "sub admin" ? true : false} customerNumbers={customerNumbers}/>
       :""
       }
     

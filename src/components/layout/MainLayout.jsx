@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { login } from '@/lib/actions/user';
 import { usePathname, useRouter } from 'next/navigation'
 import Erorr from '../Erorr';
+import { ToastContainer,Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const MainLayout = ({ children }) => {
   const { open } = useContext(MenuContext);
   const { isAuth, user } = useSelector(store => store.userReducer);
@@ -79,6 +81,19 @@ if (checkHideHeader()) {
       <div className={''}>
         <MainHeader />
         <main className='lg:ml-[280px]'>{children}</main>
+        <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+                transition= {Bounce}
+            />
       </div>
       
     </div>:
@@ -112,6 +127,19 @@ if (checkHideHeader()) {
           </div>
         </form>
       </div>
+      <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+                transition= {Bounce}
+            />
     </div>
     }
   </>

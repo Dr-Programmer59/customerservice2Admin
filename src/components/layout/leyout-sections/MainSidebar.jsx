@@ -39,7 +39,7 @@ const MainSidebar = () => {
        
     
         {
-          user.role=="admin"?
+          user?.role=="admin"?
           <>
                   <Link href='/create-employee' onClick={closeSeideBarHandler}>
           <li className='flex justify-start items-center hover:bg-blue-200 hover:text-blue-800 rounded-xl p-2'>

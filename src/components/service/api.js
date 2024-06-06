@@ -46,8 +46,10 @@ export const addMember = async (data,id) => {
         console.log("daata we have ")
         let response = await axios.post(`${url}/conversation/addMember/${id}`, data);
         console.log("response from get add member is " ,response)
+        return response;
        
     } catch (error) {
+        return false
         console.log('Error while calling add member API ', error);
     }
 }

@@ -20,7 +20,11 @@ const MainHeader = () => {
  const handleLogout=async(e)=>{
   e.preventDefault();
 
-  let res = await dispatch(logout());
+  const confirm = window.confirm("are you sure you want to logout");
+  if(confirm){
+    let res = await dispatch(logout());
+  }
+
  
 
 // Handle form submission here
