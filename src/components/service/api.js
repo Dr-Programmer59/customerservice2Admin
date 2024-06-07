@@ -53,6 +53,19 @@ export const addMember = async (data,id) => {
         console.log('Error while calling add member API ', error);
     }
 }
+
+export const clearnewMessages = async (id) => {
+    try {
+        console.log("daata we have ")
+        let response = await axios.get(`${url}/conversation/clearMessage/${id}`);
+        console.log("response from get add member is " ,response)
+        return response;
+       
+    } catch (error) {
+        return false
+        console.log('Error while calling add member API ', error);
+    }
+}
 export const getAdminConversation = async (users) => {
     try {
         let response = await axios.get(`${url}/conversation/admin/get`, users);

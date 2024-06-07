@@ -7,7 +7,7 @@ import axios from 'axios';
 import { storage } from '@/components/firebase';
 
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { createConversation, getAdminConversation, getConversation, getMessages, newMessages } from '@/components/service/api';
+import { clearnewMessages, createConversation, getAdminConversation, getConversation, getMessages, newMessages } from '@/components/service/api';
 import { current } from '@reduxjs/toolkit';
 
 import { CgProfile } from "react-icons/cg";
@@ -53,17 +53,11 @@ const [recordingDelete, setrecordingDelete] = useState(false)
       try{
         if(val.roomId){
 
-          if(val.roomId._id==currentConversation.roomId || Object.keys(currentConversation).length === 0){
-            checknewmsg=true;
-          }
-          if(checknewmsg){
+         
 
           
-          customerData.push({customerId:val.roomId._id,customerNumber:val.roomId.phone,lastmsg:val.message,employeeId: val.employeeId})
-          }
-          else{
-            customerData.push({customerId:val.roomId._id,customerNumber:val.roomId.phone,show:"new message",lastmsg:val.message,employeeId: val.employeeId})
-          }
+          customerData.push({customerId:val.roomId._id,customerNumber:val.roomId.phone,lastmsg:val.message,employeeId: val.employeeId,newMessages:val.newMessages})
+       
 
         }
       }catch{
@@ -197,13 +191,11 @@ const [recordingDelete, setrecordingDelete] = useState(false)
     if(msg.roomId== currentConversation.roomId){
       console.log("already in room")
       setmessages((prev) => [...prev, msg])
+      await clearnewMessages(msg.conversationId)
  
     }
-    else{
-      console.log("setting things")
-      await fetchContacts();
-
-    }
+  await fetchContacts();
+   
 
   }
 
@@ -228,6 +220,7 @@ const [recordingDelete, setrecordingDelete] = useState(false)
     console.log("the data is ",data)
     setcurrentConversation(data)
     const messagedata=await getMessages(data._id)
+    const clearMsg=await clearnewMessages(data._id);
     setmessages([...messagedata])
     setcustomerNumbers((prev)=>{
       prev.forEach(val=>{
@@ -236,6 +229,7 @@ const [recordingDelete, setrecordingDelete] = useState(false)
             delete val["show"]
           }
       })
+      fetchContacts();
 
       return prev
     })
@@ -327,6 +321,10 @@ const getMessage = async () => {
     socket.on("new-request:customer", handleNewCustomer)
     socket.on("waiting-customer", handleWaitingCustomer)
     socket.on("receive-msg", handleReceiveMessage)
+    socket.on("adapter:Changes",async()=>{
+      await fetchContacts();
+
+    })
     return () => {
 
       socket.off("new-request:customer", handleNewCustomer)
@@ -397,15 +395,16 @@ const getMessage = async () => {
                       <div data-key={detail.customerId}>
                         <h4 class="text-sm font-semibold text-gray-800" data-key={detail.customerId}>{detail.customerNumber}</h4>
                         <div class="text-[13px] text-gray-500" data-key={detail.customerId}>{detail.lastmsg}</div>
-                        {
-                        detail.show?
-                        <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">{detail.show}</span>
-                        :
-                        ""
-                      }
                       </div>
+                      {
+                        detail.newMessages && detail.newMessages>0?
+                    <div class="relative inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-blue-500 border-2 border-white rounded-full -top-2 -end-2 right-2 ml-5 dark:border-gray-900">{detail.newMessages}</div>
+                        
+                        :""
+                      }
                      
                     </div>
+
                   </button>
                 ))
               }
