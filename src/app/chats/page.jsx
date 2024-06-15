@@ -68,10 +68,10 @@ const [recordingDelete, setrecordingDelete] = useState(false)
     setcustomerNumbers(customerData);
   }
 
-  useEffect(() => {
+  useEffect(async() => {
   
 
-    fetchContacts();
+    await fetchContacts();
     
 
 
@@ -177,10 +177,10 @@ const [recordingDelete, setrecordingDelete] = useState(false)
   };
 
 
-  const handleNewCustomer = (data) => {
+  const handleNewCustomer =async (data) => {
     createConversation({ roomId: data.customerId, senderId: user._id, receiverId: data.customerId })
     setcustomerNumbers((prev) => (!prev.includes(data) ? [...prev, data] : [...prev]));
-    fetchContacts();
+    await fetchContacts();
 
   }
 
@@ -229,10 +229,11 @@ const [recordingDelete, setrecordingDelete] = useState(false)
             delete val["show"]
           }
       })
-      fetchContacts();
+    
 
       return prev
     })
+    await fetchContacts();
   }
 
 const getMessage = async () => {
@@ -288,7 +289,7 @@ const getMessage = async () => {
     }
   }, [imageSrc, currentConversation, user, message]);
   
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async(e) => {
     
     console.log("sending msg to ", currentCustomer);
     console.log("sending msg to ", message)
@@ -307,7 +308,7 @@ const getMessage = async () => {
       socket.emit("send-msg", msg);
        newMessages(msg);
       setmessages((prev) => [...prev, msg])
-      fetchContacts();
+      await fetchContacts();
      
 
 
