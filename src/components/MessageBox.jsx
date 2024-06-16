@@ -131,22 +131,22 @@ function MessageBox({ socket, setrecordingDelete, currentConversation, messages,
                     <button className='md:hidden block text-gray-800' onClick={() => setChatOpen(false)}><TbArrowLeft /></button>
                     <img class="rounded-full w-16 h-16" src="Images/customer.png" />
                     <div>
-                        <h2 className='text-gray-800'>{customerNumber.customerNumber}</h2>
+                        <h2 className='text-gray-800 '>{customerNumber.customerNumber}</h2>
                     </div>
 
                 </div>
-                <div>
+                <div class="flex flex-col items-end space-y-2">
                     {
                         currentEmployee ? currentEmployee.name
                             :
                             <>
-                                <select className='text-gray-800 ' onChange={handleChange}>
+                                <select className='text-gray-800 md:mr-10 ' onChange={handleChange}>
                                     <option>Transfer Chat</option>
                                     {
                                         allemployee && allemployee.map((data) => (<option data-key={data.empId}>{data.empName}</option>))
                                     }
                                 </select>
-                                <button onClick={handleTransferClick} type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Trasnfer</button>
+                                <button onClick={handleTransferClick} type="button" class="text-blue-700 hover:text-white border md:mr-10 border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Trasnfer</button>
 
                             </>
 
