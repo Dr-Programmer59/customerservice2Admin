@@ -77,7 +77,8 @@ setTimeout(() => {
       <div>
       <h1>Audio Player</h1>
     
-<audio width="300" height="32" src="Images/music.ogg" type="audio/ogg" controls="controls"></audio>
+      <video loop autoplay controls="true" src='https://firebasestorage.googleapis.com/v0/b/customer-service-6f1c0.appspot.com/o/audio%2Ff1ff08c9-28fd-4c82-9ec7-314040435586.wav?alt=media&token=56abc7ad-eaab-4e44-83aa-20c288bc4e4f' type='video/mp4' muted playsinline></video>
+
     </div>
 
 
